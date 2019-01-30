@@ -1,6 +1,18 @@
 # postcss-px-to-viewport [![NPM version](https://badge.fury.io/js/postcss-px-to-viewport.svg)](http://badge.fury.io/js/postcss-px-to-viewport)
 
-A plugin for [PostCSS](https://github.com/ai/postcss) that generates viewport units (vw, vh, vmin, vmax) from pixel units.
+A plugin for [PostCSS](https://github.com/postcss/postcss) that generates viewport units (vw, vh, vmin, vmax) from pixel units.
+
+Feel free to start watching and ⭐ project in order not miss the release or updates.
+
+<a href="https://evrone.com/?utm_source=postcss-px-to-viewport">
+  <img src="https://user-images.githubusercontent.com/417688/34437029-dbfe4ee6-ecab-11e7-9d80-2b274b4149b3.png"
+       alt="Sponsored by Evrone" width="231">
+</a>
+
+## Install
+```
+$ npm install postcss-px-to-viewport --save-dev
+```
 
 ## Usage
 
@@ -91,18 +103,26 @@ Default:
   viewportWidth: 320,
   viewportHeight: 568, // not now used; TODO: need for different units and math for different properties
   unitPrecision: 5,
+  propList: ['*'],
   viewportUnit: 'vw',
   fontViewportUnit: 'vw',  // vmin is more suitable.
   selectorBlackList: [],
   minPixelValue: 1,
   mediaQuery: false,
+  replace: true,
   exclude: [] // ignore some files
 }
 ```
 - `unitToConvert` (String) unit to convert, by default, it is px.
 - `viewportWidth` (Number) The width of the viewport.
 - `viewportHeight` (Number) The height of the viewport.
-- `unitPrecision` (Number) The decimal numbers to allow the REM units to grow to.
+- `unitPrecision` (Number) The decimal numbers to allow the vw units to grow to.
+- `propList` (Array) The properties that can change from px to vw.
+  - Values need to be exact matches.
+  - Use wildcard * to enable all properties. Example: ['*']
+  - Use * at the start or end of a word. (['*position*'] will match background-position-y)
+  - Use ! to not match a property. Example: ['*', '!letter-spacing']
+  - Combine the "not" prefix with the other prefixes. Example: ['*', '!font*']
 - `viewportUnit` (String) Expected units.
 - `fontViewportUnit` (String) Expected units for font.
 - `selectorBlackList` (Array) The selectors to ignore and leave as px.
@@ -112,12 +132,13 @@ Default:
         - `[/^body$/]` will match `body` but not `.body`
 - `minPixelValue` (Number) Set the minimum pixel value to replace.
 - `mediaQuery` (Boolean) Allow px to be converted in media queries.
+- `replace` (Boolean) replaces rules containing vw instead of adding fallbacks.
 - `exclude` (Array or Regexp) Ignore some files like 'node_modules'
     - If value is regexp, will ignore the matches files.
     - If value is array, the elements of the array are regexp.
 
 ### Use with gulp-postcss
-
+add to your gulp config:
 ```js
 var gulp = require('gulp');
 var postcss = require('gulp-postcss');
@@ -136,4 +157,16 @@ gulp.task('css', function () {
         .pipe(postcss(processors))
         .pipe(gulp.dest('build/css'));
 });
+```
+### Use with Postcss configuration file
+add to postcss.config.js
+```js
+module.exports = {
+  plugins: {
+    ...
+    'postcss-px-to-viewport': {
+      // options
+    }
+  }
+}
 ```
